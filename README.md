@@ -2,6 +2,11 @@
 
 This is a React + Vite app
 
-```js
+Bash Scripts:
+```bash
 npm install
+```
+
+```bash
+npm run dev
 ```
