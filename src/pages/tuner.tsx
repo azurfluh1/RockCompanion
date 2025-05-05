@@ -8,12 +8,12 @@ export default function Tuner() {
     const tuningPresetsData = [
         {
             name:"Standard Tuning",
-            set:["E3","B2","G2","D2","A1","E1"],        
+            set:["E3","B2","G2","D2","A2","E1"],        
             description:"Most common tuning — great for all styles."
         },
         { 
             name:"Drop D",
-            set:["E3","B2","G2","D2","A1","D1"],        
+            set:["E3","B2","G2","D2","A2","D1"],        
             description:"Just lowers the low E to D — heavier riffs, easy power chords."
         },
         { 
@@ -33,12 +33,12 @@ export default function Tuner() {
         },
         { 
             name:"Open D",
-            set:["D3","A2","F#2","D2","A1","D1"],
+            set:["D3","A2","F#2","D2","A2","D1"],
             description:"Strums a D chord — great for fingerstyle and slide."
         },
         {      
             name:"DADGAD",
-            set:["D3","A2","G2","D2","A1","D1"],
+            set:["D3","A2","G2","D2","A2","D1"],
             description:"Celtic/folk favorite — very modal and expressive."
         }
     ]
