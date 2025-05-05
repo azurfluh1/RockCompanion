@@ -3,6 +3,7 @@ import Home from './pages/home';
 import Tuner from './pages/tuner';
 import './index.css';
 import Header from './pages/header';
+import TabHero from './pages/components/tab_hero';
 
 function App() {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<Tuner />} />
+          <Route path="/tab-hero" element={<TabHero />} />
         </Routes>
       </div>
     </>

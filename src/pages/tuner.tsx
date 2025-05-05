@@ -1,6 +1,7 @@
 import { useState } from "react";
 import TunedString from "./components/tuned_string";
 import TuningPresets from "./components/tuning_presets";
+import TuningFork from "./components/tuning_fork";
 
 
 export default function Tuner() {
@@ -43,6 +44,7 @@ export default function Tuner() {
     ]
 
     const [selectedPreset, setSelectedPreset] = useState<number>(0);
+    const [currentNote, setCurrentNote] = useState<string>("");
     
     return (
         <div id="tuner" className="w-full h-[calc(100vh-97px)] p-12 pl-40 pb-0">
@@ -59,6 +61,8 @@ export default function Tuner() {
                     <img className="inline-block mt-[47px]" src="https://stuff.fendergarage.com/f-com/prod/fender-tuner/assets/tuner/img/strat/bg-df15e047a2a48ae32ce1e693baf842c4.png"/>
                 </div>
                 <TuningPresets presets={tuningPresetsData} onPresetSelect={setSelectedPreset}></TuningPresets>
+
+                <TuningFork currentNote={currentNote} setCurrentNote={setCurrentNote}></TuningFork>
             </div>
         </div>
     );
