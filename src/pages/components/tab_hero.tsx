@@ -17,6 +17,30 @@ const TabHero: React.FC = () => {
   const [currentNoteIndex, setCurrentNoteIndex] = useState<number>(0);
   const [targetTab, setTargetTab] = useState<string[]>([]);
   const didMountRef = useRef(false);
+  const [nextNoteMap, setNextNoteMap] = useState<number[]>([]);
+
+  // Compute next note map
+  useEffect(() => {
+    const map: number[] = [];
+    const totalLength = one_metallica[0].tab.length;
+  
+    let next = -1;
+  
+    for (let i = totalLength - 1; i >= 0; i--) {
+      const hasNote = one_metallica.some(stringLine => {
+        const char = stringLine.tab[i];
+        return !isNaN(parseInt(char));
+      });
+  
+      if (hasNote) {
+        next = i;
+      }
+  
+      map[i] = next;
+    }
+  
+    setNextNoteMap(map);
+  }, []);
 
   useEffect(() => {
     const nextNotes: string[] = [];
@@ -59,20 +83,9 @@ const TabHero: React.FC = () => {
   }, [currentNote]);
 
   const handleNextNote = () => {
-    let nextIndex = currentNoteIndex + 1;
-  
-    // Keep moving forward until there's a note present
-    while (nextIndex < one_metallica[0].tab.length) {
-      const hasNote = one_metallica.some(stringLine => {
-        const char = stringLine.tab[nextIndex];
-        return !isNaN(parseInt(char)); // check if it's a number (a fret)
-      });
-  
-      if (hasNote) break;
-      nextIndex++;
-    }
-  
-    setCurrentNoteIndex(nextIndex);
+    if (nextNoteMap.length === 0) return;
+    const next = nextNoteMap[currentNoteIndex + 1] ?? currentNoteIndex + 1;
+    setCurrentNoteIndex(next);
   };
 
   return (
@@ -99,7 +112,7 @@ const TabHero: React.FC = () => {
               return (
                 <div key={index} className={`'inline-block w-[20px] absolute`} style={{ left: `${60 + ((index) * 20)}px` }}>
                   {!isNaN(parseInt(char)) ? (
-                    <div className="absolute top-[-12px] bg-[#ffd4a2] w-[30px] h-[30px] text-center rounded-[100%] pt-[2px] text-lg font-bold">
+                    <div className={`absolute top-[-12px] bg-[#ffd4a2] w-[30px] h-[30px] text-center rounded-[100%] pt-[2px] text-lg font-bold ${index < currentNoteIndex ? "exploding" : ""}`}>
                       {char}
                     </div>
                   ) : char === "|" ? (
