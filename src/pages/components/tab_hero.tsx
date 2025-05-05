@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import TuningFork from './tuning_fork';
 
 const one_metallica = [
@@ -14,118 +14,136 @@ const chromaticScale = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A
 
 const TabHero: React.FC = () => {
   const [currentNote, setCurrentNote] = useState<string | null>("");
-  const [currentNoteIndex, setCurrentNoteIndex] = useState<number>(0);
-  const [targetTab, setTargetTab] = useState<string[]>([]);
+  const firstNoteIndex = useMemo(() => {
+    return one_metallica[0].tab.split("").findIndex((_, index) =>
+      one_metallica.some(line => !isNaN(parseInt(line.tab[index])))
+    );
+  }, []);
+  
+  const [currentNoteIndex, setCurrentNoteIndex] = useState<number>(firstNoteIndex);
   const didMountRef = useRef(false);
-  const [nextNoteMap, setNextNoteMap] = useState<number[]>([]);
 
-  // Compute next note map
-  useEffect(() => {
-    const map: number[] = [];
-    const totalLength = one_metallica[0].tab.length;
-  
-    let next = -1;
-  
-    for (let i = totalLength - 1; i >= 0; i--) {
-      const hasNote = one_metallica.some(stringLine => {
-        const char = stringLine.tab[i];
-        return !isNaN(parseInt(char));
-      });
-  
-      if (hasNote) {
-        next = i;
-      }
-  
-      map[i] = next;
-    }
-  
-    setNextNoteMap(map);
+  // Precompute note map
+  const notePositions = useMemo(() => {
+    return one_metallica[0].tab.split("").map((_, index) => {
+      return one_metallica
+        .map(line => {
+          const char = line.tab[index];
+          return !isNaN(parseInt(char)) ? `${line.note}-${char}` : null;
+        })
+        .filter(Boolean) as string[];
+    });
   }, []);
 
-  useEffect(() => {
-    const nextNotes: string[] = [];
-  
-    one_metallica.forEach((stringLine) => {
-      const char = stringLine.tab[currentNoteIndex];
-      if (!isNaN(parseInt(char))) {
-        nextNotes.push(`${stringLine.note}-${char}`);
-      }
-    });
-  
-    if (nextNotes.length === 0) {
-      // Don't auto-skip the very first render
-      if (didMountRef.current) {
-        setCurrentNoteIndex(prev => prev + 1);
-      }
-    } else {
-      setTargetTab(nextNotes);
+  // Precompute next note index map
+  const nextNoteMap = useMemo(() => {
+    const map: number[] = [];
+    const totalLength = one_metallica[0].tab.length;
+    let next = -1;
+    for (let i = totalLength - 1; i >= 0; i--) {
+      const hasNote = one_metallica.some(line => !isNaN(parseInt(line.tab[i])));
+      if (hasNote) next = i;
+      map[i] = next;
     }
-  
-    didMountRef.current = true;
-  }, [currentNoteIndex]);
+    return map;
+  }, []);
 
+  // Derive current target tab
+  const targetTab = useMemo(() => notePositions[currentNoteIndex] || [], [notePositions, currentNoteIndex]);
+
+  // Respond to correct note
   useEffect(() => {
     if (!currentNote || targetTab.length === 0) return;
-  
-    const targetNotes = targetTab.map((note) => {
+
+    const targetNotes = targetTab.map(note => {
       const [noteName, fret] = note.split("-");
       const base = noteName.replace(/[0-9]/g, '');
       const fretNum = parseInt(fret);
       const baseIndex = chromaticScale.indexOf(base);
       return chromaticScale[(baseIndex + fretNum) % 12];
     });
-  
+
     const played = currentNote.replace(/[0-9]/g, '');
     if (targetNotes.includes(played)) {
       console.log("Correct note played:", currentNote);
       handleNextNote();
     }
-  }, [currentNote]);
+  }, [currentNote, targetTab]);
 
   const handleNextNote = () => {
-    if (nextNoteMap.length === 0) return;
     const next = nextNoteMap[currentNoteIndex + 1] ?? currentNoteIndex + 1;
     setCurrentNoteIndex(next);
   };
 
   return (
     <div className='relative'>
-      <div className='text-xl absolute left-[100px] top-[150px] cursor-pointer rounded bg-rose-300 px-12 py-2 text-white' onClick={handleNextNote}>Next Note</div>
+      <div
+        className='text-xl absolute left-[100px] top-[150px] cursor-pointer rounded bg-rose-300 px-12 py-2 text-white'
+        onClick={handleNextNote}
+      >
+        Next Note
+      </div>
+
       {currentNote && <TuningFork currentNote={currentNote} setCurrentNote={setCurrentNote} />}
-      <div className='absolute top-[200px] w-full text-center text-2xl'>Next Note: {targetTab.join(", ")}</div>
+
+      <div className='absolute top-[200px] w-full text-center text-2xl'>
+        Next Note: {targetTab.join(", ")}
+      </div>
 
       <div id="string_names" className='absolute top-[232px] left-[40px]'>
         {one_metallica.map((note, index) => (
-          <div key={index} className="text-2xl" style={{ marginTop: index === 0 ? 30 : 24 + "px" }}>{note.note}</div>
+          <div key={index} className="text-2xl" style={{ marginTop: index === 0 ? 30 : "24px" }}>
+            {note.note}
+          </div>
         ))}
       </div>
 
       <div className='bg-[#442426] absolute mt-[240px] h-[360px] w-[90%] left-[5%] rounded-xl overflow-hidden'>
-        <div id="neck silver" className='bg-[#cac9c6] w-[20px] h-full'></div>
-        <div id="guide_neck" className='absolute w-[50px] bg-[#778b8b] h-full top-0 left-[70px]'></div>
+        {/* Fixed vertical stripe markers */}
+        <div className='bg-[#cac9c6] w-[20px] h-full'></div>
+        <div className='absolute w-[50px] bg-[#778b8b] h-full top-0 left-[70px]'></div>
 
-        {one_metallica.map((stringData, stringIndex) => (
-          <div key={stringIndex}
-            className={`absolute bg-[#cac9c6] w-[9000000px] h-[7px] pl-[60px] transition-left duration-300`}
-            style={{ top: `${30 + stringIndex * 60}px`, left: `${20 - (currentNoteIndex * 20)}px` }}>
-            {stringData.tab.split("").map((char, index) => {
-              return (
-                <div key={index} className={`'inline-block w-[20px] absolute`} style={{ left: `${60 + ((index) * 20)}px` }}>
-                  {!isNaN(parseInt(char)) ? (
-                    <div className={`absolute top-[-12px] bg-[#ffd4a2] w-[30px] h-[30px] text-center rounded-[100%] pt-[2px] text-lg font-bold ${index < currentNoteIndex ? "exploding" : ""}`}>
-                      {char}
-                    </div>
-                  ) : char === "|" ? (
-                    <div className='w-[5px] h-[70px] absolute bg-[#cac9c6] top-[-30px]'></div>
-                  ) : (
-                    <div className='text-white'></div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+        {/* Static strings - always in same place */}
+        {one_metallica.map((_, stringIndex) => (
+            <div
+            key={`static-line-${stringIndex}`}
+            className='absolute w-full h-[7px] bg-[#cac9c6]'
+            style={{ top: `${30 + stringIndex * 60}px` }}
+            />
         ))}
-      </div>
+
+        {/* Moving notes and bars */}
+        <div
+            className='absolute top-0 left-0 transition-transform duration-300'
+            style={{ transform: `translateX(-${(currentNoteIndex * 20) - 20}px)` }}
+        >
+            {one_metallica.map((stringData, stringIndex) => {
+            return stringData.tab.split("").map((char, index) => {
+                if (Math.abs(index - currentNoteIndex) > 70) return null;
+
+                return (
+                <div
+                    key={`char-${stringIndex}-${index}`}
+                    className='absolute'
+                    style={{
+                    top: `${30 + stringIndex * 60}px`,
+                    left: `${60 + index * 20}px`,
+                    width: '20px'
+                    }}
+                >
+                    {!isNaN(parseInt(char)) ? (
+                    <div className={`absolute top-[-12px] bg-[#ffd4a2] w-[30px] h-[30px] text-center rounded-full pt-[2px] text-lg font-bold ${index < currentNoteIndex ? "exploding" : ""}`}>
+                        {char}
+                    </div>
+                    ) : char === "|" ? (
+                    <div className='w-[5px] h-[70px] absolute bg-[#cac9c6] top-[-30px]'></div>
+                    ) : null}
+                </div>
+                );
+            });
+            })}
+        </div>
+        </div>
     </div>
   );
 };
