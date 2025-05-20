@@ -1,19 +1,19 @@
 import { useState } from "react";
-import TunedString from "./components/tuned_string";
-import TuningPresets from "./components/tuning_presets";
-import TuningFork from "./components/tuning_fork";
+import TunedString from "./components/TunedString";
+import TuningPresets from "./components/TuningPresets";
+import TuningFork from "./components/TuningFork";
 
 
 export default function Tuner() {
     const tuningPresetsData = [
         {
             name:"Standard Tuning",
-            set:["E3","B2","G2","D2","A2","E1"],        
+            set:["E3","B2","G2","D2","A1","E1"],        
             description:"Most common tuning — great for all styles."
         },
         { 
             name:"Drop D",
-            set:["E3","B2","G2","D2","A2","D1"],        
+            set:["E3","B2","G2","D2","A1","D1"],        
             description:"Just lowers the low E to D — heavier riffs, easy power chords."
         },
         { 
@@ -33,12 +33,12 @@ export default function Tuner() {
         },
         { 
             name:"Open D",
-            set:["D3","A2","F#2","D2","A2","D1"],
+            set:["D3","A2","F#2","D2","A1","D1"],
             description:"Strums a D chord — great for fingerstyle and slide."
         },
         {      
             name:"DADGAD",
-            set:["D3","A2","G2","D2","A2","D1"],
+            set:["D3","A2","G2","D2","A1","D1"],
             description:"Celtic/folk favorite — very modal and expressive."
         }
     ]
@@ -47,22 +47,27 @@ export default function Tuner() {
     const [currentNote, setCurrentNote] = useState<string>("");
     
     return (
-        <div id="tuner" className="w-full h-[calc(100vh-97px)] p-12 pl-40 pb-0">
-            <h1 className="text-5xl font-bold">Electric Guitar Tuner</h1>
-            <h3 className="mt-4">Tap on a note, then tune your corresponding guitar string to match the tone.</h3>
-            <div className="flex items-center mt-8 w-full">
-                <div className="tuner-container text-center w-[60%]">
-                    <TunedString note={tuningPresetsData[selectedPreset].set[0]} position={0}></TunedString>
-                    <TunedString note={tuningPresetsData[selectedPreset].set[1]} position={1}></TunedString>
-                    <TunedString note={tuningPresetsData[selectedPreset].set[2]} position={2}></TunedString>
-                    <TunedString note={tuningPresetsData[selectedPreset].set[3]} position={3}></TunedString>
-                    <TunedString note={tuningPresetsData[selectedPreset].set[4]} position={4}></TunedString>
-                    <TunedString note={tuningPresetsData[selectedPreset].set[5]} position={5}></TunedString>
-                    <img className="inline-block mt-[47px]" src="https://stuff.fendergarage.com/f-com/prod/fender-tuner/assets/tuner/img/strat/bg-df15e047a2a48ae32ce1e693baf842c4.png"/>
+        <div id="tuner" className="w-full h-auto p-4 md:p-12 md:pl-40 !pb-[0]">
+            <h1 className="text-3xl md:text-5xl font-bold">Electric Guitar Tuner</h1>
+            <h3 className="mt-2 md:mt-4 text-sm md:text-base">
+                Tap on a note, then tune your corresponding guitar string to match the tone.
+            </h3>
+            <div className="flex flex-col md:flex-row flex-wrap items-start mt-6 md:mt-8 gap-6 justify-start">
+                {/* Tuning Presets - on top in mobile, right side in desktop */}
+                <div className="order-1 lg:order-2 w-full md:w-64">
+                    <TuningPresets presets={tuningPresetsData} onPresetSelect={setSelectedPreset} />
                 </div>
-                <TuningPresets presets={tuningPresetsData} onPresetSelect={setSelectedPreset}></TuningPresets>
 
-                <TuningFork currentNote={currentNote} setCurrentNote={setCurrentNote}></TuningFork>
+                {/* Guitar & Strings */}
+                <div className="order-2 md:order-1 tuner-container text-center relative w-full md:w-[908px]">
+                    {tuningPresetsData[selectedPreset].set.map((note, index) => (
+                    <TunedString key={index} note={note} position={index} />
+                    ))}
+                    <img
+                    className="inline-block mt-[48px] w-[500px] max-w-none lg:max-w-[100%] lg:w-[560px] md:w-auto ml-20 lg:ml-0"
+                    src="https://stuff.fendergarage.com/f-com/prod/fender-tuner/assets/tuner/img/strat/bg-df15e047a2a48ae32ce1e693baf842c4.png"
+                    />
+                </div>
             </div>
         </div>
     );
