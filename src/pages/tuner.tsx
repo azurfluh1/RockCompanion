@@ -54,12 +54,12 @@ export default function Tuner() {
             </div>
             <div className="flex flex-col md:flex-row flex-wrap items-start mt-6 md:mt-8 gap-2 mg:gap-4 justify-center">
                 {/* Tuning Presets - on top in mobile, right side in desktop */}
-                <div className="order-1 lg:order-2 w-auto px-15">
+                <div className="order-1 lg:order-2 w-auto px-15 mt-[24px]">
                     <TuningPresets presets={tuningPresetsData} onPresetSelect={setSelectedPreset} />
                 </div>
 
                 {/* Guitar & Strings */}
-                <div className="order-2 md:order-1 tuner-container text-center relative w-auto">
+                <div className="order-2 md:order-1 mt-[24px] tuner-container text-center relative w-auto">
                     {tuningPresetsData[selectedPreset].set.map((note, index) => (
                     <TunedString key={index} note={note} position={index} />
                     ))}
