@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-axios.defaults.baseURL = 'https://rockcompanionbackend.fly.dev:8080';
+axios.defaults.baseURL = 'https://rockcompanionbackend.fly.dev';
 
 interface AuthContextType {
     user: any;
