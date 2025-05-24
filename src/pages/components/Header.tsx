@@ -11,7 +11,7 @@ export default function Header() {
             {!user && <div className="flex-row text-lg text-[#745336] cursor-pointer" onClick={()=>{navigate("/login")}}>Login/Register</div>}
             {user && 
                 <div className="flex-row text-lg text-[#745336] flex justify-between gap-[30px] md:gap-[60px]">
-                    <div className="visible md:hidden flex-col text-lg text-[#745336] cursor-pointer max-w-[50px] mt-[35px] sm:mt-[25px] sm:ml-[20px]"onClick={()=>{navigate("/tab-hero")}}><img src={GuitarLogo}/></div>
+                    <div className="visible md:hidden flex-col text-lg text-[#745336] cursor-pointer w-[40px] sm:ml-[20px] flex justify-center mt-0"onClick={()=>{navigate("/tab-hero")}}><img src={GuitarLogo}/></div>
                     <div className="hidden md:inline flex-col text-lg/[100px] text-[#745336] cursor-pointer"onClick={()=>{navigate("/tab-hero")}}>Play Tab Hero</div>
                     <div className="flex-col text-[#745336] text-lg/[100px] cursor-pointer" onClick={()=>{navigate("/logout")}}>{user.username}</div>
                 </div>
