@@ -30,7 +30,7 @@ const TunedString: React.FC<{ note: string, position: number }> = ({ note, posit
 
     return (
         <div
-            className="absolute ml-25 lg:ml-0 w-10 sm:w-12 h-10 sm:h-12 rounded-full p-2 text-lg sm:text-xl cursor-pointer bg-[#ffd4a2] mb-[-20px]"
+            className="absolute ml-[15px] sm:ml-25 lg:ml-0 w-10 md:w-12 h-10 md:h-12 rounded-full p-2 text-lg sm:text-xl cursor-pointer bg-[#ffd4a2] mb-[-20px]"
             style={{ top: positionFromTop }}
             onClick={handlePlay}
         >

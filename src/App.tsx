@@ -11,7 +11,7 @@ import LogoutPage from './pages/LogoutPage';
 
 function App() {
   return (
-    <>
+    <div className="overflow-x-hidden">
       <AuthProvider>
         <Header></Header>
         <div className='mt-[97px]'>
@@ -24,7 +24,7 @@ function App() {
           </Routes>
         </div>
       </AuthProvider>
-    </>
+    </div>
   );
 }
 

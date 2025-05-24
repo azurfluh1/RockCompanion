@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 axios.defaults.baseURL = 'https://rockcompanionbackend.fly.dev';
+// axios.defaults.baseURL = 'http://localhost:3000'; // Change to your backend URL
 
 interface AuthContextType {
     user: any;
