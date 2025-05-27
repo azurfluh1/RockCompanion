@@ -3,11 +3,12 @@ import './index.css';
 
 import TabHero from './pages/components/TabHero';
 import Header from './pages/components/Header';
-import Tuner from './pages/tuner';
+
 import RegistrationPage from './pages/RegistrationPage';
 import { AuthProvider } from './Auth';
 import LoginPage from './pages/LoginPage';
 import LogoutPage from './pages/LogoutPage';
+import Tuner from './pages/Tuner';
 
 function App() {
   return (
