@@ -18,6 +18,8 @@ const noteFromFrequency = (freq: number): string => {
   return `${note}${octave}`;
 };
 
+
+// NOTE: This component is no longer used in the app, but is kept here as an example of how to track active notes from the microphone input without ML.
 export const ActiveNotesTracker: React.FC<Props> = ({
     onNotesChange,
     activeNoteDurationMs = 300,

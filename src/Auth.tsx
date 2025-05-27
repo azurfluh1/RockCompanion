@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 axios.defaults.baseURL = 'https://rockcompanionbackend.fly.dev';
-// axios.defaults.baseURL = 'http://localhost:3000'; // Change to your backend URL
+// axios.defaults.baseURL = 'http://localhost:3000';
 
 interface AuthContextType {
     user: any;
@@ -32,40 +32,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         if (token) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        // Optionally fetch user profile
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         } else {
-        delete axios.defaults.headers.common["Authorization"];
+            delete axios.defaults.headers.common["Authorization"];
         }
     }, [token]);
 
     const login = async (email: string, password: string): Promise<boolean> => {
         try {
-        const res = await axios.post("/api/login", { email, password });
-        const { token, user } = res.data;
-        setToken(token);
-        setUser(user);
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-        console.log(user);
-        return true;
+            const res = await axios.post("/api/login", { email, password });
+            const { token, user } = res.data;
+            setToken(token);
+            setUser(user);
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+            console.log(user);
+            return true;
         } catch (err) {
-        console.error("Login error:", err);
-        return false;
+            console.error("Login error:", err);
+            return false;
         }
     };
 
     const register = async (user_obj: User): Promise<boolean> => {
         try {
-        const res = await axios.post("/api/register", user_obj);
-        const { token, user } = res.data;
-        setToken(token);
-        setUser(user);
-        localStorage.setItem("token", token);
-        return true;
+            const res = await axios.post("/api/register", user_obj);
+            const { token, user } = res.data;
+            setToken(token);
+            setUser(user);
+            localStorage.setItem("token", token);
+            return true;
         } catch (err) {
-        console.error("Register error:", err);
-        return false;
+            console.error("Register error:", err);
+            return false;
         }
     };
 
@@ -79,13 +78,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return (
         <AuthContext.Provider value={{ user, token, login, register, logout }}>
-        {children}
+            {children}
         </AuthContext.Provider>
     );
 };
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) throw new Error("useAuth must be used within AuthProvider");
+    if (!context) {
+        throw new Error("useAuth must be used within AuthProvider");
+    }
     return context;
 };
